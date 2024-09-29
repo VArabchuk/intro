@@ -3,6 +3,7 @@ package mate.academy.intro.repository;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import mate.academy.intro.exception.DataProcessingException;
 import mate.academy.intro.model.Book;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -28,7 +29,7 @@ public class BookRepositoryImpl implements BookRepository {
             if (transaction != null) {
                 transaction.rollback();
             }
-            throw new RuntimeException("Can't save book '" + book + "' to DB", e);
+            throw new DataProcessingException("Can't save book '" + book + "' to DB", e);
         } finally {
             if (session != null) {
                 session.close();
@@ -41,7 +42,7 @@ public class BookRepositoryImpl implements BookRepository {
         try (Session session = sessionFactory.openSession()) {
             return session.createQuery("FROM Book", Book.class).getResultList();
         } catch (Exception e) {
-            throw new RuntimeException("Can't find all books from DB", e);
+            throw new DataProcessingException("Can't find all books from DB", e);
         }
     }
 
@@ -49,6 +50,8 @@ public class BookRepositoryImpl implements BookRepository {
     public Optional<Book> findById(Long id) {
         try (Session session = sessionFactory.openSession()) {
             return Optional.ofNullable(session.find(Book.class, id));
+        } catch (Exception e) {
+            throw new DataProcessingException("Can't find a book by id: " + id, e);
         }
     }
 }
