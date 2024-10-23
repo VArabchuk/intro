@@ -48,7 +48,7 @@ public class BookController {
     @ResponseStatus(HttpStatus.OK)
     @PutMapping("/{id}")
     public BookDto updateBookById(
-            @PathVariable Long id, @RequestBody CreateBookRequestDto requestDto
+            @PathVariable Long id, @RequestBody @Valid CreateBookRequestDto requestDto
     ) {
         return bookService.updateById(id, requestDto);
     }
