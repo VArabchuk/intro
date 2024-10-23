@@ -19,19 +19,19 @@ public class BookSpecificationBuilder implements SpecificationBuilder<Book> {
         if (searchParametersDto.isbn() != null && searchParametersDto.isbn().length > 0) {
             specification
                     = specification.and(bookSpecificationProviderManager
-                    .getSpecificationProvider("isbn")
+                    .getSpecificationProvider(BookSearchCriteria.ISBN)
                     .getSpecification(searchParametersDto.isbn()));
         }
         if (searchParametersDto.author() != null && searchParametersDto.author().length > 0) {
             specification
                     = specification.and(bookSpecificationProviderManager
-                    .getSpecificationProvider("author")
+                    .getSpecificationProvider(BookSearchCriteria.AUTHOR)
                     .getSpecification(searchParametersDto.author()));
         }
         if (searchParametersDto.title() != null && searchParametersDto.title().length > 0) {
             specification
                     = specification.and(bookSpecificationProviderManager
-                    .getSpecificationProvider("title")
+                    .getSpecificationProvider(BookSearchCriteria.TITLE)
                     .getSpecification(searchParametersDto.title()));
         }
         return specification;
