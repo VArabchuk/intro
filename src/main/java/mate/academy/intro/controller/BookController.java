@@ -10,6 +10,7 @@ import mate.academy.intro.dto.BookSearchParametersDto;
 import mate.academy.intro.dto.CreateBookRequestDto;
 import mate.academy.intro.service.BookService;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,11 +27,15 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RequestMapping("/books")
 public class BookController {
+    private static final int DEFAULT_PAGE = 0;
+    private static final int DEFAULT_PAGE_SIZE = 10;
     private final BookService bookService;
 
     @GetMapping
     @Operation(summary = "Get all books", description = "Get a list of all available books")
-    public List<BookDto> getAll(Pageable pageable) {
+    public List<BookDto> getAll(
+            @PageableDefault(page = DEFAULT_PAGE, size = DEFAULT_PAGE_SIZE) Pageable pageable
+    ) {
         return bookService.getAll(pageable);
     }
 
@@ -65,7 +70,10 @@ public class BookController {
     @GetMapping("/search")
     @Operation(summary
             = "Search for books", description = "Searches for books based on specific parameters")
-    public List<BookDto> searchBooks(BookSearchParametersDto searchParameters) {
-        return bookService.search(searchParameters);
+    public List<BookDto> searchBooks(
+            BookSearchParametersDto searchParameters,
+            @PageableDefault(page = DEFAULT_PAGE, size = DEFAULT_PAGE_SIZE) Pageable pageable
+    ) {
+        return bookService.search(searchParameters, pageable);
     }
 }
