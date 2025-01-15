@@ -8,10 +8,12 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 @Constraint(validatedBy = PasswordValidator.class)
-@Target(ElementType.TYPE)
+@Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface PasswordMatch {
-    String message() default "Error. Password mismatch";
+public @interface FieldMatch {
+    String message() default "Fields do not match";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
+    String passwordFieldName();
+    String repeatPasswordFieldName();
 }

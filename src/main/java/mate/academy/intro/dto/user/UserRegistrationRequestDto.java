@@ -3,12 +3,12 @@ package mate.academy.intro.dto.user;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
-import mate.academy.intro.validator.PasswordMatch;
+import mate.academy.intro.validator.FieldMatch;
 import org.hibernate.validator.constraints.Length;
 
 @Getter
 @Setter
-@PasswordMatch
+@FieldMatch(passwordFieldName = "password", repeatPasswordFieldName = "repeatPassword")
 public class UserRegistrationRequestDto {
     @NotBlank
     private String email;
@@ -22,8 +22,5 @@ public class UserRegistrationRequestDto {
     private String firstName;
     @NotBlank
     private String lastName;
-    @NotBlank
     private String shippingAddress;
-
-
 }
