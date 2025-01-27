@@ -15,7 +15,9 @@ public interface UserMapper {
     UserResponseDto toUserResponse(User user);
 
     @Mapping(source = "encodedPassword", target = "password")
-    @Mapping(source = "savedRoles", target = "roles")
+    @Mapping(source = "rolesForNewUser", target = "roles")
     User toUser(
-            UserRegistrationRequestDto requestDto, String encodedPassword, Set<Role> savedRoles);
+            UserRegistrationRequestDto requestDto,
+            String encodedPassword,
+            Set<Role> rolesForNewUser);
 }

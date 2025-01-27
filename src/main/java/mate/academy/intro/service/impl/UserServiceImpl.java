@@ -9,8 +9,8 @@ import mate.academy.intro.exception.RegistrationException;
 import mate.academy.intro.mapper.UserMapper;
 import mate.academy.intro.model.Role;
 import mate.academy.intro.model.User;
+import mate.academy.intro.repository.role.RolesRepository;
 import mate.academy.intro.repository.user.UserRepository;
-import mate.academy.intro.service.RolesService;
 import mate.academy.intro.service.UserService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -18,8 +18,9 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
+    private static final String ADMIN_IDENTIFIER = "admin@";
     private final UserRepository userRepository;
-    private final RolesService rolesService;
+    private final RolesRepository rolesRepository;
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
 
@@ -27,27 +28,29 @@ public class UserServiceImpl implements UserService {
     public UserResponseDto register(UserRegistrationRequestDto requestDto)
             throws RegistrationException {
         String email = requestDto.getEmail();
-        if (userRepository.existsUserByEmail(email)) {
-            throw new RegistrationException("The user with email: "
-                    + email
-                    + " is already registered");
-        }
-        Set<Role> roles = new HashSet<>();
 
-        Role savedRole = rolesService.save(getRoleByEmail(email));
-        roles.add(savedRole);
+        validateEmailNotRegistered(email);
+
         String encodedPassword = passwordEncoder.encode(requestDto.getPassword());
-        User savedUser = userRepository.save(userMapper.toUser(requestDto, encodedPassword, roles));
-        return userMapper.toUserResponse(savedUser);
+
+        User newUser = userMapper.toUser(requestDto, encodedPassword, getRolesForNewUser(email));
+
+        return userMapper.toUserResponse(userRepository.save(newUser));
     }
 
-    private Role getRoleByEmail(String email) {
-        Role role = new Role();
-        if (email.toLowerCase().startsWith("admin@")) {
-            role.setRole(Role.RoleName.ROLE_ADMIN);
-        } else {
-            role.setRole(Role.RoleName.ROLE_USER);
+    private void validateEmailNotRegistered(String email) throws RegistrationException {
+        if (userRepository.existsUserByEmail(email)) {
+            throw new RegistrationException("The user with email: '"
+                    + email
+                    + "' is already registered");
         }
-        return role;
+    }
+
+    private Set<Role> getRolesForNewUser(String email) {
+        Set<Role> roles = new HashSet<>();
+        roles.add(rolesRepository.findRoleByRoleName(email.toLowerCase().contains(ADMIN_IDENTIFIER)
+                ? Role.RoleName.ROLE_ADMIN
+                : Role.RoleName.ROLE_USER));
+        return roles;
     }
 }
