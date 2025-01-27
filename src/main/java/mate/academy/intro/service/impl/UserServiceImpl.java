@@ -1,7 +1,5 @@
 package mate.academy.intro.service.impl;
 
-import java.util.HashSet;
-import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import mate.academy.intro.dto.user.UserRegistrationRequestDto;
 import mate.academy.intro.dto.user.UserResponseDto;
@@ -18,7 +16,6 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
-    private static final String ADMIN_IDENTIFIER = "admin@";
     private final UserRepository userRepository;
     private final RolesRepository rolesRepository;
     private final UserMapper userMapper;
@@ -29,28 +26,30 @@ public class UserServiceImpl implements UserService {
             throws RegistrationException {
         String email = requestDto.getEmail();
 
-        validateEmailNotRegistered(email);
+        checkUserExistsByEmail(email);
+
+        User newUser = userMapper.toUser(requestDto);
 
         String encodedPassword = passwordEncoder.encode(requestDto.getPassword());
+        Role roleForNewUser = getRoleForNewUser(email);
 
-        User newUser = userMapper.toUser(requestDto, encodedPassword, getRolesForNewUser(email));
+        newUser.setPassword(encodedPassword);
+        newUser.getRoles().add(roleForNewUser);
 
         return userMapper.toUserResponse(userRepository.save(newUser));
     }
 
-    private void validateEmailNotRegistered(String email) throws RegistrationException {
+    private void checkUserExistsByEmail(String email) throws RegistrationException {
         if (userRepository.existsUserByEmail(email)) {
-            throw new RegistrationException("The user with email: '"
+            throw new RegistrationException("The user with email '"
                     + email
                     + "' is already registered");
         }
     }
 
-    private Set<Role> getRolesForNewUser(String email) {
-        Set<Role> roles = new HashSet<>();
-        roles.add(rolesRepository.findRoleByRoleName(email.toLowerCase().contains(ADMIN_IDENTIFIER)
+    private Role getRoleForNewUser(String email) {
+        return rolesRepository.findRoleByRoleName(email.toLowerCase().contains("admin@")
                 ? Role.RoleName.ROLE_ADMIN
-                : Role.RoleName.ROLE_USER));
-        return roles;
+                : Role.RoleName.ROLE_USER);
     }
 }
