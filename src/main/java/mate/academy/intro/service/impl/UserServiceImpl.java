@@ -1,5 +1,6 @@
 package mate.academy.intro.service.impl;
 
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import mate.academy.intro.dto.user.UserRegistrationRequestDto;
 import mate.academy.intro.dto.user.UserResponseDto;
@@ -24,17 +25,14 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponseDto register(UserRegistrationRequestDto requestDto)
             throws RegistrationException {
-        String email = requestDto.getEmail();
 
-        checkUserExistsByEmail(email);
+        checkUserExistsByEmail(requestDto.getEmail());
 
         User newUser = userMapper.toUser(requestDto);
-
         String encodedPassword = passwordEncoder.encode(requestDto.getPassword());
-        Role roleForNewUser = getRoleForNewUser(email);
 
         newUser.setPassword(encodedPassword);
-        newUser.getRoles().add(roleForNewUser);
+        newUser.setRoles(Set.of(rolesRepository.findRoleByRoleName(Role.RoleName.ROLE_USER)));
 
         return userMapper.toUserResponse(userRepository.save(newUser));
     }
@@ -45,11 +43,5 @@ public class UserServiceImpl implements UserService {
                     + email
                     + "' is already registered");
         }
-    }
-
-    private Role getRoleForNewUser(String email) {
-        return rolesRepository.findRoleByRoleName(email.toLowerCase().contains("admin@")
-                ? Role.RoleName.ROLE_ADMIN
-                : Role.RoleName.ROLE_USER);
     }
 }
