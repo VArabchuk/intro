@@ -41,7 +41,7 @@ public class AuthenticationController {
             description = "Accepts user credentials, validates them, "
                     + "and returns a JWT token if authentication is successful."
     )
-    public UserLoginResponseDto login(@RequestBody UserLoginRequestDto requestDto) {
+    public UserLoginResponseDto login(@RequestBody @Valid UserLoginRequestDto requestDto) {
         return authenticationService.authenticate(requestDto);
     }
 }

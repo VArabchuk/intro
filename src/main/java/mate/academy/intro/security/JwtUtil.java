@@ -41,7 +41,6 @@ public class JwtUtil {
         } catch (JwtException | IllegalArgumentException e) {
             throw new JwtException("Expired or invalid JWT token", e);
         }
-
     }
 
     public String getUserName(String token) {
