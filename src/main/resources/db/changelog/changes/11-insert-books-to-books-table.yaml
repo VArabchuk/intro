@@ -1,0 +1,59 @@
+databaseChangeLog:
+  - changeSet:
+      id: 11-insert-books-to-books-table
+      author: arabon
+      changes:
+        - insert:
+            tableName: books
+            columns:
+              - column: { name: "title", value: "The Martian" }
+              - column: { name: "author", value: "Andy Weir" }
+              - column: { name: "isbn", value: "978-0-8041-3902-1" }
+              - column: { name: "price", value: "12.99" }
+              - column: {
+                name: "description",
+                value: "A science fiction novel about survival on Mars."
+              }
+              - column: { name: "cover_image", value: "martian.jpg" }
+        - insert:
+            tableName: books
+            columns:
+              - column: { name: "title", value: "Sapiens: A Brief History of Humankind" }
+              - column: { name: "author", value: "Yuval Noah Harari" }
+              - column: { name: "isbn", value: "978-0062316097" }
+              - column: { name: "price", value: "15.99" }
+              - column: { name: "description", value: "A historical overview of humankind." }
+              - column: { name: "cover_image", value: "sapiens.jpg" }
+        - insert:
+            tableName: books
+            columns:
+              - column: { name: "title", value: "The Hobbit" }
+              - column: { name: "author", value: "J.R.R. Tolkien" }
+              - column: { name: "isbn", value: "978-0547928227" }
+              - column: { name: "price", value: "10.99" }
+              - column: {
+                name: "description",
+                value: "A fantasy novel about Bilbo Baggins' adventure."
+              }
+              - column: { name: "cover_image", value: "hobbit.jpg" }
+        - insert:
+            tableName: books
+            columns:
+              - column: { name: "title", value: "1984" }
+              - column: { name: "author", value: "George Orwell" }
+              - column: { name: "isbn", value: "978-0451524935" }
+              - column: { name: "price", value: "9.99" }
+              - column: {
+                name: "description",
+                value: "A dystopian novel about a totalitarian regime."
+              }
+              - column: { name: "cover_image", value: "1984.jpg" }
+        - insert:
+            tableName: books
+            columns:
+              - column: { name: "title", value: "A Brief History of Time" }
+              - column: { name: "author", value: "Stephen Hawking" }
+              - column: { name: "isbn", value: "978-0553380163" }
+              - column: { name: "price", value: "14.99" }
+              - column: { name: "description", value: "A popular-science book on cosmology." }
+              - column: { name: "cover_image", value: "time.jpg" }
