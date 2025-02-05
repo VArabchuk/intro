@@ -12,6 +12,7 @@ import mate.academy.intro.service.BookService;
 import mate.academy.intro.service.CategoryService;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -38,6 +40,7 @@ public class CategoryController {
             description = "Creates and returns a new category based on the provided request DTO."
     )
     @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @ResponseStatus(HttpStatus.CREATED)
     public CategoryResponseDto createCategory(
             @RequestBody @Valid CategoryRequestDto categoryRequestDto
     ) {
@@ -64,6 +67,7 @@ public class CategoryController {
     @PutMapping("/{id}")
     @Operation(summary = "Update a category", description = "Updates an existing category by ID.")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @ResponseStatus(HttpStatus.OK)
     public CategoryResponseDto updateCategory(
             @PathVariable Long id, @RequestBody @Valid CategoryRequestDto categoryRequestDto
     ) {
@@ -73,6 +77,7 @@ public class CategoryController {
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete a category", description = "Deletes a category by its ID.")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteCategory(@PathVariable Long id) {
         categoryService.deleteById(id);
     }

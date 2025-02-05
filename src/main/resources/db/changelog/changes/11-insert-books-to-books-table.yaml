@@ -15,7 +15,6 @@ databaseChangeLog:
                 value: "A science fiction novel about survival on Mars."
               }
               - column: { name: "cover_image", value: "martian.jpg" }
-              # Категорія: Science, Fiction
         - insert:
             tableName: books
             columns:
@@ -25,7 +24,6 @@ databaseChangeLog:
               - column: { name: "price", value: "15.99" }
               - column: { name: "description", value: "A historical overview of humankind." }
               - column: { name: "cover_image", value: "sapiens.jpg" }
-              # Категорія: History, Science
         - insert:
             tableName: books
             columns:
@@ -38,7 +36,6 @@ databaseChangeLog:
                 value: "A fantasy novel about Bilbo Baggins' adventure."
               }
               - column: { name: "cover_image", value: "hobbit.jpg" }
-              # Категорія: Fantasy
         - insert:
             tableName: books
             columns:
@@ -51,7 +48,6 @@ databaseChangeLog:
                 value: "A dystopian novel about a totalitarian regime."
               }
               - column: { name: "cover_image", value: "1984.jpg" }
-              # Категорія: Fiction
         - insert:
             tableName: books
             columns:
@@ -61,4 +57,3 @@ databaseChangeLog:
               - column: { name: "price", value: "14.99" }
               - column: { name: "description", value: "A popular-science book on cosmology." }
               - column: { name: "cover_image", value: "time.jpg" }
-              # Категорія: Science
