@@ -10,6 +10,7 @@ import mate.academy.intro.model.Role;
 import mate.academy.intro.model.User;
 import mate.academy.intro.repository.role.RolesRepository;
 import mate.academy.intro.repository.user.UserRepository;
+import mate.academy.intro.service.ShoppingCartService;
 import mate.academy.intro.service.UserService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,7 @@ public class UserServiceImpl implements UserService {
     private final RolesRepository rolesRepository;
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
+    private final ShoppingCartService shoppingCartService;
 
     @Override
     public UserResponseDto register(UserRegistrationRequestDto requestDto)
@@ -33,8 +35,9 @@ public class UserServiceImpl implements UserService {
 
         newUser.setPassword(encodedPassword);
         newUser.setRoles(Set.of(rolesRepository.findRoleByRoleName(Role.RoleName.ROLE_USER)));
-
-        return userMapper.toUserResponse(userRepository.save(newUser));
+        User savedUser = userRepository.save(newUser);
+        shoppingCartService.createShoppingCart(savedUser);
+        return userMapper.toUserResponse(savedUser);
     }
 
     private void checkUserExistsByEmail(String email) throws RegistrationException {
