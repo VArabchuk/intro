@@ -9,7 +9,6 @@ import mate.academy.intro.dto.cartitem.CartItemRequestDtoForUpdate;
 import mate.academy.intro.dto.shoppingcart.ShoppingCartResponseDto;
 import mate.academy.intro.mapper.ShoppingCartMapper;
 import mate.academy.intro.model.User;
-import mate.academy.intro.service.CartItemService;
 import mate.academy.intro.service.ShoppingCartService;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -25,55 +24,64 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@Tag(name = "Shopping Cart Management",
-        description = "Endpoints for managing shopping cart and cart items")
 @RequestMapping("/cart")
+@Tag(
+        name = "Shopping Cart Management",
+        description = "Endpoints for managing shopping cart and cart items"
+)
 public class ShoppingCartController {
     private final ShoppingCartService shoppingCartService;
-    private final CartItemService cartItemService;
     private final ShoppingCartMapper shoppingCartMapper;
 
     @GetMapping
-    @Operation(summary = "Get user's shopping cart",
-            description = "Retrieves the shopping cart of the authenticated user")
-    public ShoppingCartResponseDto getUsersShoppingCart(@AuthenticationPrincipal User user) {
+    @Operation(
+            summary = "Get user's shopping cart",
+            description = "Retrieves the shopping cart of the authenticated user"
+    )
+    public ShoppingCartResponseDto getUsersShoppingCart(
+            @AuthenticationPrincipal User user
+    ) {
         return shoppingCartService.getShoppingCart(user.getId());
     }
 
     @PostMapping
-    @Operation(summary = "Add an item to the cart",
-            description = "Adds a new item to the authenticated user's shopping cart")
     @ResponseStatus(HttpStatus.CREATED)
+    @Operation(
+            summary = "Add an item to the cart",
+            description = "Adds a new item to the authenticated user's shopping cart"
+    )
     public ShoppingCartResponseDto createCartItem(
             @RequestBody @Valid CartItemRequestDto cartItemRequestDto,
             @AuthenticationPrincipal User user
     ) {
-        return shoppingCartMapper.toDto(
-                cartItemService.createCartItem(cartItemRequestDto, user.getId())
-                        .getShoppingCart()
-        );
+        return shoppingCartService.createCartItem(cartItemRequestDto, user);
     }
 
-    @DeleteMapping("/items/{cartItemId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @Operation(summary = "Remove an item from the cart",
-            description = "Deletes an item from the authenticated user's shopping cart by its ID")
-    public void deleteCartItem(@PathVariable Long cartItemId, @AuthenticationPrincipal User user) {
-        cartItemService.deleteCartItem(cartItemId, user.getId());
+    @DeleteMapping("/items/{cartItemId}")
+    @Operation(
+            summary = "Remove an item from the cart",
+            description = "Deletes an item from the authenticated user's shopping cart by its ID"
+    )
+    public void deleteCartItem(
+            @PathVariable Long cartItemId,
+            @AuthenticationPrincipal User user
+    ) {
+        shoppingCartService.deleteCartItem(cartItemId, user.getId());
     }
 
     @PutMapping("/items/{cartItemId}")
     @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "Update an item in the cart",
+    @Operation(
+            summary = "Update an item in the cart",
             description = "Updates the quantity of a cart item "
-                    + "in the authenticated user's shopping cart")
+                    + "in the authenticated user's shopping cart"
+    )
     public ShoppingCartResponseDto updateCartItem(
             @PathVariable Long cartItemId,
             @RequestBody @Valid CartItemRequestDtoForUpdate dtoForUpdate,
             @AuthenticationPrincipal User user
     ) {
-        return shoppingCartMapper.toDto(
-                cartItemService.updateCartItem(cartItemId, dtoForUpdate, user.getId())
-                        .getShoppingCart());
+        return shoppingCartService.updateCartItem(cartItemId, dtoForUpdate, user.getId());
     }
 }

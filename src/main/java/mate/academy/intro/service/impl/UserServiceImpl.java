@@ -35,9 +35,11 @@ public class UserServiceImpl implements UserService {
 
         newUser.setPassword(encodedPassword);
         newUser.setRoles(Set.of(rolesRepository.findRoleByRoleName(Role.RoleName.ROLE_USER)));
-        User savedUser = userRepository.save(newUser);
-        shoppingCartService.createShoppingCart(savedUser);
-        return userMapper.toUserResponse(savedUser);
+        userRepository.save(newUser);
+
+        shoppingCartService.createShoppingCart(newUser);
+
+        return userMapper.toUserResponse(newUser);
     }
 
     private void checkUserExistsByEmail(String email) throws RegistrationException {
