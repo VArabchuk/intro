@@ -32,13 +32,10 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
             User user
     ) {
         Long bookId = cartItemRequestDto.getBookId();
-
         Book book = bookRepository.findById(bookId)
                 .orElseThrow(
                         () -> new EntityNotFoundException("Can't find book by Id: " + bookId));
-
         ShoppingCart shoppingCart = getShoppingCartByUserId(user.getId());
-
         CartItem cartItem = shoppingCart.getCartItems().stream()
                 .filter(item -> item.getBook().getId().equals(bookId))
                 .findAny()
@@ -47,12 +44,10 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
                     shoppingCart.getCartItems().add(item);
                     return item;
                 });
-
         cartItem
                 .setShoppingCart(shoppingCart)
                 .setBook(book)
                 .setQuantity(cartItem.getQuantity() + cartItemRequestDto.getQuantity());
-
         cartItemRepository.save(cartItem);
         return shoppingCartMapper.toDto(shoppingCart);
     }
@@ -75,14 +70,9 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
             CartItemRequestDtoForUpdate dtoForUpdate,
             Long userId
     ) {
-
-        CartItem cartItem
-                = findCartItemBelongsToUser(cartItemId, userId)
-                .setQuantity(dtoForUpdate.quantity());
-
-        cartItemRepository
-                .save(cartItem);
-
+        CartItem cartItem = findCartItemBelongsToUser(cartItemId, userId);
+        cartItem.setQuantity(dtoForUpdate.quantity());
+        cartItemRepository.save(cartItem);
         return shoppingCartMapper.toDto(getShoppingCartByUserId(userId));
     }
 

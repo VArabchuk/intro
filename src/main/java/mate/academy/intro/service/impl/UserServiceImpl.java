@@ -14,6 +14,7 @@ import mate.academy.intro.service.ShoppingCartService;
 import mate.academy.intro.service.UserService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -24,21 +25,17 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
     private final ShoppingCartService shoppingCartService;
 
+    @Transactional
     @Override
     public UserResponseDto register(UserRegistrationRequestDto requestDto)
             throws RegistrationException {
-
         checkUserExistsByEmail(requestDto.getEmail());
-
         User newUser = userMapper.toUser(requestDto);
         String encodedPassword = passwordEncoder.encode(requestDto.getPassword());
-
         newUser.setPassword(encodedPassword);
         newUser.setRoles(Set.of(rolesRepository.findRoleByRoleName(Role.RoleName.ROLE_USER)));
         userRepository.save(newUser);
-
         shoppingCartService.createShoppingCart(newUser);
-
         return userMapper.toUserResponse(newUser);
     }
 
