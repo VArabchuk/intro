@@ -10,9 +10,11 @@ import mate.academy.intro.model.Role;
 import mate.academy.intro.model.User;
 import mate.academy.intro.repository.role.RolesRepository;
 import mate.academy.intro.repository.user.UserRepository;
+import mate.academy.intro.service.ShoppingCartService;
 import mate.academy.intro.service.UserService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -21,20 +23,20 @@ public class UserServiceImpl implements UserService {
     private final RolesRepository rolesRepository;
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
+    private final ShoppingCartService shoppingCartService;
 
+    @Transactional
     @Override
     public UserResponseDto register(UserRegistrationRequestDto requestDto)
             throws RegistrationException {
-
         checkUserExistsByEmail(requestDto.getEmail());
-
         User newUser = userMapper.toUser(requestDto);
         String encodedPassword = passwordEncoder.encode(requestDto.getPassword());
-
         newUser.setPassword(encodedPassword);
         newUser.setRoles(Set.of(rolesRepository.findRoleByRoleName(Role.RoleName.ROLE_USER)));
-
-        return userMapper.toUserResponse(userRepository.save(newUser));
+        userRepository.save(newUser);
+        shoppingCartService.createShoppingCart(newUser);
+        return userMapper.toUserResponse(newUser);
     }
 
     private void checkUserExistsByEmail(String email) throws RegistrationException {
