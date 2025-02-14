@@ -1,7 +1,6 @@
 package mate.academy.intro.service.impl;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -19,11 +18,11 @@ import mate.academy.intro.model.Order;
 import mate.academy.intro.model.OrderItem;
 import mate.academy.intro.model.ShoppingCart;
 import mate.academy.intro.model.User;
-import mate.academy.intro.repository.cartitem.CartItemRepository;
 import mate.academy.intro.repository.order.OrderRepository;
 import mate.academy.intro.repository.orderitem.OrderItemRepository;
 import mate.academy.intro.repository.shoppingcart.ShoppingCartRepository;
 import mate.academy.intro.service.OrderService;
+import mate.academy.intro.service.ShoppingCartService;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,7 +33,7 @@ public class OrderServiceImpl implements OrderService {
     private final OrderRepository orderRepository;
     private final OrderItemRepository orderItemRepository;
     private final ShoppingCartRepository shoppingCartRepository;
-    private final CartItemRepository cartItemRepository;
+    private final ShoppingCartService shoppingCartService;
     private final OrderMapper orderMapper;
     private final OrderItemMapper orderItemMapper;
 
@@ -48,12 +47,8 @@ public class OrderServiceImpl implements OrderService {
                     "Ваш кошик порожній. Додайте товари перед оформленням замовлення."
             );
         }
-        Order order = buildOrder(orderRequestDto.getShippingAddress(), user, cartItems);
-        orderRepository.save(order);
-        Set<OrderItem> orderItems = createOrderItemsSet(cartItems, order);
-        order.setOrderItems(orderItems);
-        orderItemRepository.saveAll(orderItems);
-        cartItemRepository.deleteByShoppingCartAndId(user.getId());
+        Order order = createAndSaveOrder(orderRequestDto.getShippingAddress(), user, cartItems);
+        shoppingCartService.clearUsersShoppingCart(user.getId());
         return orderMapper.toDto(order);
     }
 
@@ -94,12 +89,15 @@ public class OrderServiceImpl implements OrderService {
                         + "' is empty"));
     }
 
-    private Order buildOrder(String shippingAddress, User user, Set<CartItem> cartItems) {
-        return new Order()
+    private Order createAndSaveOrder(String shippingAddress, User user, Set<CartItem> cartItems) {
+        Order order = new Order()
                 .setShippingAddress(shippingAddress)
-                .setUser(user).setOrderDate(LocalDateTime.now())
+                .setUser(user)
                 .setStatus(Order.Status.PENDING)
                 .setTotal(getTotalBalanceForCartItems(cartItems));
+        Set<OrderItem> orderItems = createOrderItemsSet(cartItems, order);
+        order.setOrderItems(orderItems);
+        return orderRepository.save(order);
     }
 
     private Set<OrderItem> createOrderItemsSet(Set<CartItem> cartItems, Order order) {
