@@ -22,7 +22,6 @@ import mate.academy.intro.repository.order.OrderRepository;
 import mate.academy.intro.repository.orderitem.OrderItemRepository;
 import mate.academy.intro.repository.shoppingcart.ShoppingCartRepository;
 import mate.academy.intro.service.OrderService;
-import mate.academy.intro.service.ShoppingCartService;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,7 +32,6 @@ public class OrderServiceImpl implements OrderService {
     private final OrderRepository orderRepository;
     private final OrderItemRepository orderItemRepository;
     private final ShoppingCartRepository shoppingCartRepository;
-    private final ShoppingCartService shoppingCartService;
     private final OrderMapper orderMapper;
     private final OrderItemMapper orderItemMapper;
 
@@ -44,11 +42,11 @@ public class OrderServiceImpl implements OrderService {
         Set<CartItem> cartItems = cart.getCartItems();
         if (cartItems.isEmpty()) {
             throw new EmptyCartException(
-                    "Ваш кошик порожній. Додайте товари перед оформленням замовлення."
+                    "Your shopping cart is empty. Add items before placing an order."
             );
         }
         Order order = createAndSaveOrder(orderRequestDto.getShippingAddress(), user, cartItems);
-        shoppingCartService.clearUsersShoppingCart(user.getId());
+        cart.getCartItems().clear();
         return orderMapper.toDto(order);
     }
 

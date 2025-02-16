@@ -19,6 +19,4 @@ public interface ShoppingCartService {
     );
 
     void createShoppingCart(User newUser);
-
-    void clearUsersShoppingCart(Long userId);
 }
