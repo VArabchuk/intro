@@ -27,8 +27,8 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
         return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
     }
 
-    @ExceptionHandler(FieldValidationException.class)
-    public ResponseEntity<Object> handleCheckedExceptions(FieldValidationException ex) {
+    @ExceptionHandler({FieldValidationException.class, EmptyCartException.class})
+    public ResponseEntity<Object> handleCheckedExceptions(RuntimeException ex) {
         Map<String, String> errorResponse = new HashMap<>();
         errorResponse.put("error", ex.getMessage());
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);

@@ -7,7 +7,6 @@ import lombok.RequiredArgsConstructor;
 import mate.academy.intro.dto.cartitem.CartItemRequestDto;
 import mate.academy.intro.dto.cartitem.CartItemRequestDtoForUpdate;
 import mate.academy.intro.dto.shoppingcart.ShoppingCartResponseDto;
-import mate.academy.intro.mapper.ShoppingCartMapper;
 import mate.academy.intro.model.User;
 import mate.academy.intro.service.ShoppingCartService;
 import org.springframework.http.HttpStatus;
@@ -31,7 +30,6 @@ import org.springframework.web.bind.annotation.RestController;
 )
 public class ShoppingCartController {
     private final ShoppingCartService shoppingCartService;
-    private final ShoppingCartMapper shoppingCartMapper;
 
     @GetMapping
     @Operation(
