@@ -5,7 +5,7 @@ services:
     image: mysql:8.0.33
     container_name: mysqldb
     restart: unless-stopped
-    env_file: ./.env
+    env_file: .env.template
     environment:
       MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD
       MYSQL_USER: $MYSQL_USER
@@ -21,7 +21,7 @@ services:
     restart: on-failure
     image: book-store-app
     build: .
-    env_file: ./.env
+    env_file: .env.template
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://mysqldb:$MYSQL_DOCKER_PORT/$MYSQL_DB
       SPRING_DATASOURCE_USERNAME: $MYSQL_USER
