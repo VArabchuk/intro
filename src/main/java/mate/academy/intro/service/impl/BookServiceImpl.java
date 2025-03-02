@@ -57,6 +57,9 @@ public class BookServiceImpl implements BookService {
     public BookDto updateById(Long id, CreateBookRequestDto requestDto) {
         Book book = getBookModelById(id);
         bookMapper.updateBookFromDto(requestDto, book);
+        Set<Category> categories
+                = categoryService.getCategoriesByIdIn(requestDto.getCategoryIds());
+        book.setCategories(categories);
         return bookMapper.toDto(bookRepository.save(book));
     }
 
